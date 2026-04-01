@@ -43,6 +43,11 @@ ppdata = pppub %>% select(
     PERIDNUM, MARSUPWT                              # id & weight
 )
 
+# Recode MARSUPWT variable (2 implied decimals) & Filter age 18-64 
+ppdata = ppdata %>%
+    mutate(MARSUPWT = MARSUPWT / 100) %>%
+    filter(A_AGE >= 18 & A_AGE <= 64)
+
 # Rewrite to Output 
-write_csv(ppdata, "output/ppdata.csv")
+write_csv(ppdata, "data/output/ppdata.csv")
 
