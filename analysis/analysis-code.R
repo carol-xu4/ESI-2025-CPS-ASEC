@@ -85,3 +85,25 @@ esiown = ppdata %>% filter(A_AGE >= 18 & A_AGE <= 64, WORKYN == 1) %>%
         pop_n = sum(MARSUPWT), 
         .groups = "drop")
 write.csv(esiown, "results/esi_own.csv")
+
+ggplot(esiown, aes(x = esi_origin, y = pop_n / 1e6, fill = esi_origin)) +
+    geom_col(position = "dodge") +
+    scale_y_continuous(breaks = seq(0, 150, by = 20)) +
+    scale_fill_manual(
+        values = c("Own Employer" = "#3043B4", "Not Own Employer" = "#7C756D")) +
+    labs(
+        title = "Workers on ESI by ESI Origin (2025)",
+        subtitle = "CPS ASEC, ages 18-64",
+        x = NULL, y = "Population (millions)",
+        fill = NULL) +
+    theme_stata() +
+    theme(
+        plot.title = element_text(size = 40, face = "bold", hjust = 0, color = "black"),
+        plot.subtitle = element_text(size = 30, color = "black", margin = margin(b = 12), hjust = 0),
+        legend.position = "right",
+        legend.text = element_text(size = 20),
+        axis.title.y = element_text(size = 30),
+        axis.text.x = element_text(size = 35), 
+        axis.text.y = element_text(size = 35, angle = 0, vjust = 0.5),
+        plot.background = element_rect(fill = "white"))
+ggsave("results/ESI_origin.png", width = 20, height = 15)
