@@ -65,7 +65,6 @@ ggplot(esipop, aes(x = work_status, y = pop_n / 1e6, fill = esi)) +
         fill = NULL) +
     theme_stata() +
     theme(
-        text = element_text(family = "sans"),
         plot.title = element_text(size = 40, face = "bold", hjust = 0, color = "black"),
         plot.subtitle = element_text(size = 30, color = "black", margin = margin(b = 12), hjust = 0),
         legend.position = "right",
@@ -77,3 +76,12 @@ ggplot(esipop, aes(x = work_status, y = pop_n / 1e6, fill = esi)) +
 ggsave("results/ESI_plot.png", width = 20, height = 15)
 
 #  How many non-elderly workers (aged 18-64) are on ESI from their own employer. 
+esiown = ppdata %>% filter(A_AGE >= 18 & A_AGE <= 64, WORKYN == 1) %>%
+    mutate(
+        esi_origin = ifelse(NOW_OWNGRP == 1, "Own Employer", "Not Own Employer")) %>%
+    group_by(esi_origin) %>%
+    summarise( 
+        raw_n = n(),
+        pop_n = sum(MARSUPWT), 
+        .groups = "drop")
+write.csv(esiown, "results/esi_own.csv")
