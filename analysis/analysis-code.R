@@ -1,6 +1,6 @@
 ## Preliminaries -----------------------------------------------------------
 if (!require("pacman")) install.packages("pacman")
-pacman::p_load(tidyverse, ggplot2, dplyr, lubridate, stringr, readxl, data.table, gdata, readr)
+pacman::p_load(tidyverse, ggplot2, ggthemes, dplyr, lubridate, stringr, readxl, data.table, gdata, readr)
 
 # Set working directory ----------------------------------------------------
 setwd("C:/Users/CarolXu/OneDrive - Cato Institute/Desktop/CPS ASEC")
@@ -53,6 +53,27 @@ esikids = ppdata %>% filter(A_AGE < 18) %>%
 esipop = bind_rows(esiadults, esikids)
 write_csv(esipop, "results/esi_pop.csv")
 
-# Population on ESI by age
+ggplot(esipop, aes(x = work_status, y = pop_n / 1e6, fill = esi)) +
+    geom_col(position = "dodge") +
+    scale_y_continuous(breaks = seq(0, 150, by = 20)) +
+    scale_fill_manual(
+        values = c("On ESI" = "#3043B4", "Not on ESI" = "#7C756D")) +
+    labs(
+        title = "Employer-Sponsored Insurance by Work Status (2025)",
+        subtitle = "CPS ASEC, ages 0-64",
+        x = NULL, y = "Population (millions)",
+        fill = NULL) +
+    theme_stata() +
+    theme(
+        text = element_text(family = "sans"),
+        plot.title = element_text(size = 40, face = "bold", hjust = 0, color = "black"),
+        plot.subtitle = element_text(size = 30, color = "black", margin = margin(b = 12), hjust = 0),
+        legend.position = "right",
+        legend.text = element_text(size = 20),
+        axis.title.y = element_text(size = 30),
+        axis.text.x = element_text(size = 35), 
+        axis.text.y = element_text(size = 35, angle = 0, vjust = 0.5),
+        plot.background = element_rect(fill = "white"))
+ggsave("results/ESI_plot.png", width = 20, height = 15)
 
 #  How many non-elderly workers (aged 18-64) are on ESI from their own employer. 
