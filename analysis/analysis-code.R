@@ -77,6 +77,28 @@ ggplot(esipop, aes(x = work_status, y = pop_n / 1e6, fill = esi)) +
         plot.background = element_rect(fill = "white"))
 ggsave("results/ESI_plot.png", width = 20, height = 15)
 
+# All on ESI (age 0-85) (other public coverage grouped)
+all_esi = ppdata %>%
+  mutate(
+    coverage = case_when(
+      NOW_GRP == 1 ~ "ESI",
+      NOW_MRK == 1 ~ "Marketplace",
+      NOW_DIR == 1 ~ "Direct Purchase",
+      NOW_MCAID == 1 ~ "Medicaid",
+      NOW_MCARE == 1 ~ "Medicare",
+      NOW_VACARE == 1 | NOW_CHAMPVA == 1 | NOW_MIL == 1 ~ "Other Public",
+      NOW_IHSFLG == 1 ~ "IHS Only",
+      NOW_COV == 0 ~ "Uninsured",
+      TRUE ~ "Other"))
+
+esi_total_counts = all_esi %>%
+    group_by(coverage) %>%
+    summarise( 
+        raw_n = n(), 
+        pop_n = sum(MARSUPWT), 
+        .groups = "drop") %>% arrange(desc(pop_n))
+write_csv(esi_total_counts, "results/coverage_total_counts.csv")
+
 #  How many non-elderly workers (aged 18-64) are on ESI from their own employer. 
 esiown = ppdata %>% filter(A_AGE >= 18 & A_AGE <= 64, WORKYN == 1) %>%
     mutate(
@@ -112,3 +134,7 @@ ggplot(esiown, aes(x = esi_origin, y = pop_n / 1e6, fill = esi_origin)) +
         plot.background = element_rect(fill = "white"))
 ggsave("results/ESI_origin.png", width = 20, height = 15)
 
+# How many non-elderly workers (aged 18-64) were eligible for ESI and offered ESI from their employer but did not take it. (We call this group “decliners”)
+
+
+# And crucially, how many “decliners” are on ESI from another family member.

@@ -25,7 +25,7 @@ ppdata = pppub %>% select(
     FAMREL, A_FAMREL, A_HGA, A_PFREL,               # family / education
     WORKYN, WRK_CK, PEMLR, CLWK, PEIO1COW,          # employment
     ERN_SRCE, ERN_VAL, PTOTVAL,                     # income
-    COV, COV_MULT_CYR, PRIV, PUB,                   # any insurance
+    NOW_COV, COV_MULT_CYR, PRIV, PUB,                   # any insurance
     GRP, OWNGRP, DEPGRP, OUTGRP,                    # ESI (past year)
     NOW_GRP, NOW_OWNGRP, NOW_DEPGRP,                # ESI (current)
     ESIOFFER, ESICOULD,                             # ESI offer / eligibility
@@ -35,9 +35,9 @@ ppdata = pppub %>% select(
     PEWNELIG1, PEWNELIG2, PEWNELIG3, PEWNELIG4,     # alt eligibility / take
     PEWNELIG5,PEWNELIG6, PEWNTAKE1, PEWNTAKE2, PEWNTAKE3,
     PEWNTAKE4, PEWNTAKE5, PEWNTAKE6, PEWNTAKE7, PEWNTAKE8,                         
-    DIR, MRK, MRKS, NONM,                           # private non-ESI
-    CAID, MCAID, MCARE,                             # public coverage
-    MIL, VACARE, CHAMPVA, PCHIP, IHSFLG,            # other public coverage
+    NOW_DIR, NOW_MRK, MRKS, NONM,                           # private non-ESI
+    CAID, NOW_MCAID, NOW_MCARE,                             # public coverage
+    NOW_MIL, NOW_VACARE, NOW_CHAMPVA, NOW_PCHIP, NOW_IHSFLG,            # other public coverage
     HEA,                                            # health
     MOOP,                                           # health spending
     PERIDNUM, MARSUPWT                              # weight

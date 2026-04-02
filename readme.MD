@@ -5,7 +5,8 @@ https://www.census.gov/data/datasets/time-series/demo/cps/cps-asec.html
 - 110,681,349 adult workers are on ESI
 - 15,446,728 adult non-workers are on ESI
 - 39,520,250 children are on ESI
-- 165,648,327 total people (age 0-64) are on ESI
+- 165,648,327 people age 0-64 are on ESI
+- 177,952,703 total people are on ESI (age 0-85)
 
 <img src="results/ESI_plot.png" width="400">
 
