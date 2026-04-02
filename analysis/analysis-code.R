@@ -27,16 +27,30 @@ esi_nowork_pop = ppdata %>%
     filter(A_AGE >= 18 & A_AGE <= 64, WORKYN == 2) %>%
     summarise(esi_nowork_pop = sum(MARSUPWT[NOW_GRP == 2]))
 
-# Population on ESI by worker status
-esipop = ppdata %>% filter(A_AGE >= 18 & A_AGE <= 64) %>%
+# Population on ESI by worker status (age 18-64)
+esiadults = ppdata %>% filter(A_AGE >= 18 & A_AGE <= 64) %>%
     mutate( 
         worker = ifelse(WORKYN == 1, "Worker", "Non-worker"),
         esi = ifelse(NOW_GRP == 1, "On ESI", "Not on ESI")) %>%
     group_by(worker, esi) %>%
-    summarise(raw_n = n(), 
+    summarise(
+        raw_n = n(), 
         pop_n = sum(MARSUPWT), 
         .groups = "drop")
 
+write_csv(esiadults, "results/esi_adults.csv")
+
+esikids = ppdata %>% filter(A_AGE < 18) %>%
+    mutate( 
+        worker = "Child", 
+        esi = ifelse(NOW_GRP == 1, "On ESI", "Not on ESI")) %>%
+    group_by(worker, esi) %>%
+    summarise(
+        raw_n = n(), 
+        pop_n = sum(MARSUPWT), 
+        .groups = "drop")
+
+esipop = bind_rows(esiadults, esikids)
 write_csv(esipop, "results/esi_pop.csv")
 
 # Population on ESI by age
