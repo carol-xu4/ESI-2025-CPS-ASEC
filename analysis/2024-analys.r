@@ -6,29 +6,29 @@ pacman::p_load(tidyverse, ggplot2, ggthemes, dplyr, lubridate, stringr, readxl, 
 setwd("C:/Users/CarolXu/OneDrive - Cato Institute/Desktop/CPS ASEC")
 
 # Read in data -------------------------------------------------------------
-ppdata = read.csv("data/output/ppdata.csv")
+data24 = read.csv("data/output/2024data.csv")
 
 # How many non-elderly workers (aged 18-64) are on ESI.
-esi_workers_raw = ppdata %>%
+esi_workers_raw24 = data24 %>%
     filter(A_AGE >= 18 & A_AGE <= 64, WORKYN == 1) %>%
-    summarise(esi_workers_raw = sum(NOW_GRP == 1))
+    summarise(esi_workers_raw24 = sum(NOW_GRP == 1))
 
-esi_workers_pop = ppdata %>% 
+esi_workers_pop24 = data24 %>% 
     filter(A_AGE >= 18 & A_AGE <= 64, WORKYN == 1) %>%
-    summarise(esi_workers_pop = sum(MARSUPWT[NOW_GRP == 1]))
+    summarise(esi_workers_pop24 = sum(MARSUPWT[NOW_GRP == 1]))
 
 # Non-workers on ESI (age 18-64)
-esi_nowork_raw = ppdata %>%
+esi_nowork_raw24 = data24 %>%
     filter(A_AGE >= 18 & A_AGE <= 64, WORKYN == 2) %>%
-    summarise(esi_nowork_raw = sum(NOW_GRP == 2))
+    summarise(esi_nowork_raw24 = sum(NOW_GRP == 2))
 
 # Non-workers on ESI (under age 18)
-esi_nowork_pop = ppdata %>%
+esi_nowork_pop24 = data24 %>%
     filter(A_AGE >= 18 & A_AGE <= 64, WORKYN == 2) %>%
-    summarise(esi_nowork_pop = sum(MARSUPWT[NOW_GRP == 2]))
+    summarise(esi_nowork_pop24 = sum(MARSUPWT[NOW_GRP == 2]))
 
 # Population on ESI by worker status (age 18-64)
-esiadults = ppdata %>% filter(A_AGE >= 18 & A_AGE <= 64) %>%
+esiadults24 = data24 %>% filter(A_AGE >= 18 & A_AGE <= 64) %>%
     mutate( 
         work_status = ifelse(WORKYN == 1, "Worker", "Non-worker"),
         esi = ifelse(NOW_GRP == 1, "On ESI", "Not on ESI")) %>%
@@ -38,9 +38,9 @@ esiadults = ppdata %>% filter(A_AGE >= 18 & A_AGE <= 64) %>%
         pop_n = sum(MARSUPWT), 
         .groups = "drop")
 
-write_csv(esiadults, "results/esi_adults.csv")
+write_csv(esiadults24, "results/esi_adults2024.csv")
 
-esikids = ppdata %>% filter(A_AGE < 18) %>%
+esikids24 = data24 %>% filter(A_AGE < 18) %>%
     mutate( 
         work_status = "Child", 
         esi = ifelse(NOW_GRP == 1, "On ESI", "Not on ESI")) %>%
@@ -50,16 +50,16 @@ esikids = ppdata %>% filter(A_AGE < 18) %>%
         pop_n = sum(MARSUPWT), 
         .groups = "drop")
 
-esipop = bind_rows(esiadults, esikids)
-write_csv(esipop, "results/esi_pop.csv")
+esipop24 = bind_rows(esiadults24, esikids24)
+write_csv(esipop24, "results/esi_pop24.csv")
 
-ggplot(esipop, aes(x = work_status, y = pop_n / 1e6, fill = esi)) +
+ggplot(esipop24, aes(x = work_status, y = pop_n / 1e6, fill = esi)) +
     geom_col(position = "dodge") +
     scale_y_continuous(breaks = seq(0, 150, by = 20)) +
     scale_fill_manual(
         values = c("On ESI" = "#3043B4", "Not on ESI" = "#7C756D")) +
     labs(
-        title = "Employer-Sponsored Insurance by Work Status (2025)",
+        title = "Employer-Sponsored Insurance by Work Status (2024)",
         subtitle = "CPS ASEC, ages 0-64",
         caption = "Source: U.S. Census Bureau; Current Population Survey Annual Social and Economic Supplement (2025)",
         x = NULL, y = "Population (millions)",
@@ -75,10 +75,10 @@ ggplot(esipop, aes(x = work_status, y = pop_n / 1e6, fill = esi)) +
         axis.text.y = element_text(size = 35, angle = 0, vjust = 0.5),
         plot.caption = element_text(size = 12),
         plot.background = element_rect(fill = "white"))
-ggsave("results/ESI_plot.png", width = 20, height = 15)
+ggsave("results/ESI_plot2024.png", width = 20, height = 15)
 
 # All on ESI (age 0-85) (other public coverage grouped)
-all_esi = ppdata %>%
+all_esi24 = data24 %>%
   mutate(
     coverage = case_when(
       NOW_GRP == 1 ~ "ESI",
@@ -91,16 +91,16 @@ all_esi = ppdata %>%
       NOW_COV == 0 ~ "Uninsured",
       TRUE ~ "Other"))
 
-esi_total_counts = all_esi %>%
+esi_total_counts24 = all_esi24 %>%
     group_by(coverage) %>%
     summarise( 
         raw_n = n(), 
         pop_n = sum(MARSUPWT), 
         .groups = "drop") %>% arrange(desc(pop_n))
-write_csv(esi_total_counts, "results/coverage_total_counts.csv")
+write_csv(esi_total_counts24, "results/coverage_total_counts2024.csv")
 
 #  How many non-elderly workers (aged 18-64) are on ESI from their own employer. 
-esiown = ppdata %>% filter(A_AGE >= 18 & A_AGE <= 64, WORKYN == 1, NOW_GRP == 1) %>%
+esiown24 = data24 %>% filter(A_AGE >= 18 & A_AGE <= 64, WORKYN == 1, NOW_GRP == 1) %>%
     mutate(
         esi_origin = case_when(
             NOW_OWNGRP == 1 ~ "Own Employer", 
@@ -110,17 +110,17 @@ esiown = ppdata %>% filter(A_AGE >= 18 & A_AGE <= 64, WORKYN == 1, NOW_GRP == 1)
         raw_n = n(),
         pop_n = sum(MARSUPWT), 
         .groups = "drop")
-write.csv(esiown, "results/esi_own.csv")
+write.csv(esiown24, "results/esi_own2024.csv")
 
-ggplot(esiown, aes(x = esi_origin, y = pop_n / 1e6, fill = esi_origin)) +
+ggplot(esiown24, aes(x = esi_origin, y = pop_n / 1e6, fill = esi_origin)) +
     geom_col(position = "dodge") +
     scale_y_continuous(breaks = seq(0, 150, by = 20)) +
     scale_fill_manual(
         values = c("Own Employer" = "#3043B4", "Family Plan" = "#7C756D")) +
     labs(
-        title = "Workers on ESI by ESI Origin (2025)",
+        title = "Workers on ESI by ESI Origin (2024)",
         subtitle = "CPS ASEC, ages 18-64",
-        caption = "Source: U.S. Census Bureau; Current Population Survey Annual Social and Economic Supplement (2025)",
+        caption = "Source: U.S. Census Bureau; Current Population Survey Annual Social and Economic Supplement (2024)",
         x = NULL, y = "Population (millions)",
         fill = NULL) +
     theme_stata() +
@@ -134,25 +134,9 @@ ggplot(esiown, aes(x = esi_origin, y = pop_n / 1e6, fill = esi_origin)) +
         axis.text.y = element_text(size = 35, angle = 0, vjust = 0.5),
         plot.caption = element_text(size = 12),
         plot.background = element_rect(fill = "white"))
-ggsave("results/ESI_origin.png", width = 20, height = 15)
+ggsave("results/ESI_origin2024.png", width = 20, height = 15)
 
 # How many non-elderly workers (aged 18-64) were eligible for ESI and offered ESI from their employer but did not take it. (We call this group “decliners”)
-all_eligible = ppdata %>% filter(A_AGE >= 18 & A_AGE <= 64, WORKYN == 1, ESIOFFER == 1) %>%
-    summarise( 
-       employer_offers = sum(MARSUPWT), 
-       eligible = sum(MARSUPWT * (ESICOULD == 1)), 
-       enrolled = sum(MARSUPWT * (NOW_GRP == 1)),
-       not_enrolled = sum(MARSUPWT * (NOW_GRP == 2)))
 
-esi_offered = ppdata %>% filter(A_AGE >= 18 & A_AGE <= 64, 
-    WORKYN == 1, 
-    ESICOULD == 1,
-    NOW_GRP == 2) %>%
-     summarise( 
-        raw_n = n(), 
-        pop_n = sum(MARSUPWT), 
-        .groups = "drop")
-
-esi_offered
 
 # And crucially, how many “decliners” are on ESI from another family member.
