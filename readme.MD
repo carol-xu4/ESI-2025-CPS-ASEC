@@ -14,7 +14,7 @@ https://www.census.gov/data/datasets/time-series/demo/cps/cps-asec.html
 - 81,023,761 working adults are on ESI from their own employer
 
 ### How many non-elderly workers (aged 18-64) are on ESI from another family member (family plan).
-- 77,167,868 working adults are on ESI from a family plan
+- 26,314,974 working adults are on ESI from a family plan
 
 <img src="results/ESI_origin.png" width="400">
 

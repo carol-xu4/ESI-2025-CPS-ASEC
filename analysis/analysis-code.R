@@ -100,9 +100,11 @@ esi_total_counts = all_esi %>%
 write_csv(esi_total_counts, "results/coverage_total_counts.csv")
 
 #  How many non-elderly workers (aged 18-64) are on ESI from their own employer. 
-esiown = ppdata %>% filter(A_AGE >= 18 & A_AGE <= 64, WORKYN == 1) %>%
+esiown = ppdata %>% filter(A_AGE >= 18 & A_AGE <= 64, WORKYN == 1, NOW_GRP == 1) %>%
     mutate(
-        esi_origin = ifelse(NOW_OWNGRP == 1, "Own Employer", "Not Own Employer")) %>%
+        esi_origin = case_when(
+            NOW_OWNGRP == 1 ~ "Own Employer", 
+            NOW_DEPGRP == 1 ~ "Family Plan")) %>%
     group_by(esi_origin) %>%
     summarise( 
         raw_n = n(),
@@ -114,7 +116,7 @@ ggplot(esiown, aes(x = esi_origin, y = pop_n / 1e6, fill = esi_origin)) +
     geom_col(position = "dodge") +
     scale_y_continuous(breaks = seq(0, 150, by = 20)) +
     scale_fill_manual(
-        values = c("Own Employer" = "#3043B4", "Not Own Employer" = "#7C756D")) +
+        values = c("Own Employer" = "#3043B4", "Family Plan" = "#7C756D")) +
     labs(
         title = "Workers on ESI by ESI Origin (2025)",
         subtitle = "CPS ASEC, ages 18-64",
@@ -125,7 +127,7 @@ ggplot(esiown, aes(x = esi_origin, y = pop_n / 1e6, fill = esi_origin)) +
     theme(
         plot.title = element_text(size = 40, face = "bold", hjust = 0, color = "black"),
         plot.subtitle = element_text(size = 30, color = "black", margin = margin(b = 12), hjust = 0),
-        legend.position = "right",
+        legend.position = "none",
         legend.text = element_text(size = 20),
         axis.title.y = element_text(size = 30),
         axis.text.x = element_text(size = 35), 
@@ -135,15 +137,27 @@ ggplot(esiown, aes(x = esi_origin, y = pop_n / 1e6, fill = esi_origin)) +
 ggsave("results/ESI_origin.png", width = 20, height = 15)
 
 # How many non-elderly workers (aged 18-64) were eligible for ESI and offered ESI from their employer but did not take it. (We call this group “decliners”)
-all_eligible = ppdata %>%
+all_eligible = ppdata %>% filter(A_AGE >= 18 & A_AGE <= 64, WORKYN == 1, NOW_GRP == 2) %>%
     mutate(
         status = ifelse(ESICOULD == 1, "Eligible", "Not Eligible"), 
-        esi_origin = ifelse(NOW_OWNGRP == 1, "Own Employer", "Not Own Employer")) %>%
+        esi_origin = case_when(
+            NOW_OWNGRP == 1 ~ "Own Employer", 
+            NOW_DEPGRP == 1 ~ "Family Plan")) %>%
     group_by(esi_origin) %>%
     summarise( 
-        raw_n = n(, 
+        raw_n = n(), 
         pop_n = sum(MARSUPWT), 
-        .groups = "drop"))
+        .groups = "drop")
 
-        
+esi_offered = ppdata %>% filter(A_AGE >= 18 & A_AGE <= 64, 
+    WORKYN == 1, 
+    ESICOULD == 1,
+    NOW_GRP == 2) %>%
+     summarise( 
+        raw_n = n(), 
+        pop_n = sum(MARSUPWT), 
+        .groups = "drop")
+
+esi_offered
+
 # And crucially, how many “decliners” are on ESI from another family member.
