@@ -18,6 +18,4 @@ https://www.census.gov/data/datasets/time-series/demo/cps/cps-asec.html
 
 <img src="results/ESI_origin.png" width="400">
 
-### How many non-elderly workers (aged 18-64) were eligible for ESI and offered ESI from their employer but did not take it. (We call this group “decliners”)
 
-### And crucially, how many “decliners” are on ESI from another family member.
