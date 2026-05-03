@@ -136,7 +136,4 @@ ggplot(esiown24, aes(x = esi_origin, y = pop_n / 1e6, fill = esi_origin)) +
         plot.background = element_rect(fill = "white"))
 ggsave("results/ESI_origin2024.png", width = 20, height = 15)
 
-# How many non-elderly workers (aged 18-64) were eligible for ESI and offered ESI from their employer but did not take it. (We call this group “decliners”)
 
-
-# And crucially, how many “decliners” are on ESI from another family member.
